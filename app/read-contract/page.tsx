@@ -1,6 +1,6 @@
 "use client";
 
-import { publicClient } from "./client";
+import { publicClient } from "@/app/client";
 import { useEffect, useState } from "react";
 
 const contractAddress = "0x0483b0dfc6c78062b9e999a82ffb795925381415";
@@ -45,7 +45,11 @@ const abi = [
     }
   ];
   
-function Header({ title }) {
+interface HeaderProps {
+  title?: string;
+}
+
+function Header({ title }: HeaderProps) {
   return <h1>{title ? title : "Default title"}</h1>;
 }
 
@@ -92,16 +96,22 @@ export default function ReadContract() {
     }, []);
   
     return (
-      <div>
+      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Header title="Read Contract" />
-        <div>
+        <div style={{ marginBottom: "20px" }}>
           <input
-            type="text"
-            value={inputTokenId}
-            onChange={(e) => setInputTokenId(e.target.value)}
-            placeholder="Enter tokenId"
+        type="text"
+        value={inputTokenId}
+        onChange={(e) => setInputTokenId(e.target.value)}
+        placeholder="Enter tokenId"
+        style={{ padding: "10px", fontSize: "16px", marginRight: "10px", color: "black" }}
           />
-          <button onClick={handleQuery}>Query</button>
+          <button 
+        onClick={handleQuery} 
+        style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer", color: "white", backgroundColor: "blue", border: "none", borderRadius: "5px" }}
+          >
+        Query
+          </button>
         </div>
         <div>
           <p>Owner of token {tokenId}: {owner ? owner : "Loading..."}</p>
