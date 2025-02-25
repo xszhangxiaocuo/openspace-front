@@ -5,8 +5,6 @@ import { getWalletClient, sepoliaClient } from "./createByPrivate";
 import {
   parseEther,
   parseGwei,
-  encodeAbiParameters,
-  decodeAbiParameters,
   encodeFunctionData
 } from "viem";
 import { abi } from "./abi";
@@ -74,7 +72,7 @@ export default function Wallet() {
     // 构建交易
     const request = await walletClient.prepareTransactionRequest({
       from: account.address,
-      to: toAddress as any,
+      to: toAddress as `0x${string}`,
       value: parseEther(amount),
       data: "0x",
       type: "eip1559",
