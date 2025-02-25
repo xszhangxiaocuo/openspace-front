@@ -48,22 +48,6 @@ export default function Wallet() {
     const nonce = await sepoliaClient.getTransactionCount({
       address: userAddress,
     });
-    // const txParams = {
-    //   account: account,
-    //   to: toAddress, // 目标地址
-    //   value: parseEther("0.0001"), // 发送金额（ETH）
-    //   chainId: sepolia.id,
-
-    //   // EIP-1559 交易
-    //   maxFeePerGas: parseGwei("40"), // 最大总费用（基础费用+小费）
-    //   maxPriorityFeePerGas: parseGwei("2"), // 最大小费
-
-    //   gas: 21000n, // 普通交易 - gas limit
-    //   nonce: nonce,
-    // };
-    // console.log("Transaction Params:", txParams);
-    // const gasEstimate = await sepoliaClient.estimateGas(txParams)
-    // txParams.gas = gasEstimate
 
     const currentGasPrice = await sepoliaClient.getGasPrice(); // 获取当前 Gas 价格
     const maxFeePerGas = currentGasPrice + parseGwei("5"); // maxFeePerGas 设置为当前 gas + 5 Gwei
