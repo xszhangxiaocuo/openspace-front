@@ -17,8 +17,8 @@ if (!projectId) {
 // Set up metadata
 const metadata = {
   name: 'hoshino',
-  description: 'AppKit Example',
-  url: 'https://reown.com/appkit', // origin must match your domain & subdomain
+  description: 'Wellcome to OpenBank',
+  url: 'https://openspace-front.vercel.app', // origin must match your domain & subdomain
   icons: ['https://assets.reown.com/reown-profile-pic.png']
 }
 
