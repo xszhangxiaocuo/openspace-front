@@ -57,10 +57,10 @@ export default function WalletUI() {
 
   // EIP-712 域和类型，name 和 version 是Token代币的信息
   const domain = {
-    name: tokenName,
+    name: tokenName ?? "",
     version: "1",
     chainId: sepolia.id,
-    verifyingContract: tokenAddress,
+    verifyingContract: tokenAddress as `0x${string}` ?? "",
   } as const;
 
   const types = {
