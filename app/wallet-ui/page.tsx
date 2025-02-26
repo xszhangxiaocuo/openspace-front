@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppKitAccount } from "@reown/appkit/react";
-import { useReadContract, useWriteContract } from "wagmi";
+import { useReadContract, useWriteContract, useSignMessage } from "wagmi";
 import { useState, useEffect, useCallback } from "react";
 import { abi } from "./abi";
 
@@ -26,6 +26,7 @@ export default function WalletUI() {
     args: [address],
     query: { enabled: false },
   });
+  const {signMessage} = useSignMessage();
 
   const onRead = useCallback(async () => {
     try {
@@ -52,6 +53,11 @@ export default function WalletUI() {
 
     try {
       console.log("正在发送交易...");
+
+      const message = `Welcome to OpenSpace!`;
+      const signature = signMessage({ message });
+      console.log("签名信息:", signature);
+      
       writeContract({
         address: tokenAddress,
         abi: abi,
