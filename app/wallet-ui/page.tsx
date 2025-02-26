@@ -2,7 +2,7 @@
 
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useReadContract, useWriteContract } from "wagmi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { abi } from "./abi";
 
 export default function WalletUI() {
@@ -12,7 +12,13 @@ export default function WalletUI() {
   const [amount, setAmount] = useState<string>("");
   const [balance, setBalance] = useState<string | null>(null);
 
-  const { data: hash, writeContract, isSuccess, error, isPending } = useWriteContract();
+  const {
+    data: hash,
+    writeContract,
+    isSuccess,
+    error,
+    isPending,
+  } = useWriteContract();
   const readContract = useReadContract({
     address: tokenAddress,
     abi: abi,
@@ -21,16 +27,16 @@ export default function WalletUI() {
     query: { enabled: false },
   });
 
-  const onRead = async () => {
+  const onRead = useCallback(async () => {
     try {
       const data = await readContract.refetch();
       setBalance(data.data as string);
     } catch (error) {
       console.error("读取余额失败:", error);
     }
-  };
+  }, [readContract]);
 
-  const onSend = async () => {
+  const onSend = () => {
     if (!isConnected || !address) {
       console.error("用户未连接钱包或没有选中地址");
       return;
@@ -46,7 +52,7 @@ export default function WalletUI() {
 
     try {
       console.log("正在发送交易...");
-      await writeContract({
+      writeContract({
         address: tokenAddress,
         abi: abi,
         functionName: "transfer",
@@ -66,7 +72,7 @@ export default function WalletUI() {
     if (error) {
       console.error("交易失败:", error.message);
     }
-  }, [isSuccess, error, hash]);
+  }, [isSuccess, error, hash, onRead]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", padding: "20px" }}>
@@ -90,11 +96,16 @@ export default function WalletUI() {
       <div>
         <h2>Current Address: {address ? address : null}</h2>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}
+      >
         <h2>Token Address: {tokenAddress}</h2>
         <div>
           <h2>Balance: {balance}</h2>
-          <button onClick={onRead} style={{ background: "blue", marginTop: "10px" }}>
+          <button
+            onClick={onRead}
+            style={{ background: "blue", marginTop: "10px" }}
+          >
             Query Balance
           </button>
         </div>
