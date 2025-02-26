@@ -18,8 +18,11 @@ export default function WalletUI() {
   const [amount, setAmount] = useState<string>("");
   const [balance, setBalance] = useState<string | null>(null);
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
-  const tokenAddress = "0xE188f6376fcaA542F200Fd5071420b69042CbF0D";
-  const tokenBankAddress = "0x7ad39619C806Ab9e549dC0537B26Ce9B20d8BF2f";
+  const [tokenAddress, setTokenAddress] = useState<string | null>(null);
+  const [tokenBankAddress, setTokenBankAddress] = useState<string | null>(null);
+  const [tokenName, setTokenName] = useState<string | null>(null);
+  // const tokenAddress = "0xE188f6376fcaA542F200Fd5071420b69042CbF0D";
+  // const tokenBankAddress = "0x7ad39619C806Ab9e549dC0537B26Ce9B20d8BF2f";
 
   const {
     data: hash,
@@ -43,7 +46,7 @@ export default function WalletUI() {
     query: { enabled: false },
   });
   const readNonce = useReadContract({
-    address: tokenAddress,
+    address: tokenAddress as `0x${string}`,
     abi: ERC20ABI,
     functionName: "nonces",
     args: [address as `0x${string}`],
@@ -54,7 +57,7 @@ export default function WalletUI() {
 
   // EIP-712 域和类型，name 和 version 是Token代币的信息
   const domain = {
-    name: "Hoshino",
+    name: tokenName,
     version: "1",
     chainId: sepolia.id,
     verifyingContract: tokenAddress,
@@ -107,7 +110,7 @@ export default function WalletUI() {
 
       // const message = `Welcome to OpenSpace!`;
       // 1天后过期
-      const deadline = Math.floor(Date.now() / 1000) + 24*60*60;
+      const deadline = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
       // 签名消息
       const signature = await signTypedDataAsync({
         domain,
@@ -177,6 +180,33 @@ export default function WalletUI() {
       <div>
         <h2>Current Address: {address ? address : null}</h2>
       </div>
+      <div>
+        <input
+          type="text"
+          placeholder="tokenAddress"
+          value={tokenAddress ?? ""}
+          onChange={(e) => setTokenAddress(e.target.value)}
+          style={{ marginTop: "10px", color: "black" }}
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="tokenBankAddress"
+          value={tokenBankAddress ?? ""}
+          onChange={(e) => setTokenBankAddress(e.target.value)}
+          style={{ marginTop: "10px", color: "black" }}
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="tokenName"
+          value={tokenName ?? ""}
+          onChange={(e) => setTokenName(e.target.value)}
+          style={{ marginTop: "10px", color: "black" }}
+        />
+      </div>
       <div
         style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}
       >
@@ -190,7 +220,9 @@ export default function WalletUI() {
             Query Token Balance
           </button>
         </div>
-        <h2 style={{marginTop: "10px"}}>Token Bank Address: {tokenBankAddress}</h2>
+        <h2 style={{ marginTop: "10px" }}>
+          Token Bank Address: {tokenBankAddress}
+        </h2>
         <div>
           <h2>Token Bank Balance: {balance}</h2>
           <button
