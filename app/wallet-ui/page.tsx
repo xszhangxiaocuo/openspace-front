@@ -18,9 +18,9 @@ export default function WalletUI() {
   const [amount, setAmount] = useState<string>("");
   const [balance, setBalance] = useState<string | null>(null);
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
-  const [tokenAddress, setTokenAddress] = useState<string | null>(null);
-  const [tokenBankAddress, setTokenBankAddress] = useState<string | null>(null);
-  const [tokenName, setTokenName] = useState<string | null>(null);
+  const [tokenAddress, setTokenAddress] = useState<string | null>("0xE188f6376fcaA542F200Fd5071420b69042CbF0D");
+  const [tokenBankAddress, setTokenBankAddress] = useState<string | null>("0x7ad39619C806Ab9e549dC0537B26Ce9B20d8BF2f");
+  const [tokenName, setTokenName] = useState<string | null>("Hoshino");
   // const tokenAddress = "0xE188f6376fcaA542F200Fd5071420b69042CbF0D";
   // const tokenBankAddress = "0x7ad39619C806Ab9e549dC0537B26Ce9B20d8BF2f";
 
