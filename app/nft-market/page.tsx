@@ -39,10 +39,8 @@ export default function NFTMarket() {
   const [v1, setV1] = useState<number | null>(null);
   const [r1, setR1] = useState<string | null>(null);
   const [s1, setS1] = useState<string | null>(null);
-
-
-  // const deadline = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
-  const deadline = 1740900988;  
+  // 固定时间戳
+  const [deadline, setDeadline] = useState<number>(() => Math.floor(Date.now() / 1000) + 24 * 60 * 60);
 
   const {
     data: hash,
