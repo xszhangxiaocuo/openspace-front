@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createPublicClient, http, parseAbiItem } from "viem";
+import { createPublicClient, http, parseAbiItem, formatUnits } from "viem";
 import { mainnet } from "viem/chains";
 
 const client = createPublicClient({
@@ -33,7 +33,9 @@ export default function USDTTransfers() {
         const parsedTransfers = logs.reverse().map((log) => ({
           from: log.args.from || "",
           to: log.args.to || "",
-          amount: (Number(log.args.value) / 1e6).toFixed(5), // USDT 有 6 位小数
+          // amount: (Number(log.args.value) / 1e6).toFixed(5), // USDT 有 6 位小数
+          // 精度使用formatUnits进行格式化
+          amount: log.args.value ? formatUnits(log.args.value, 6) : "0",
           transactionHash: log.transactionHash,
           blockNumber: BigInt(log.blockNumber),
         }));
