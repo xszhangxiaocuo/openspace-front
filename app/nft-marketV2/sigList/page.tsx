@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getListSig } from "@/utils/router";
 
-interface ListSig {
+export interface ListSig {
   id: number;
   seller: string;
   tokenId: string;

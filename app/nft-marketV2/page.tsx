@@ -13,6 +13,7 @@ import { useState, useEffect, useCallback } from "react";
 import { NFTABI, NFTMarketABI, ERC20ABI } from "./abi";
 import { parseSignature } from "viem";
 import { AddSigRequest, addSig, getSig } from "@/utils/router";
+import { ListSig } from "./sigList/page"; 
 
 export default function NFTMarket() {
   const { allAccounts, address, isConnected } = useAppKitAccount();
@@ -27,7 +28,7 @@ export default function NFTMarket() {
     "0x07D3130751B589fD46133deB1E0c67D5D4626922"
   );
   const [NFTMarketAddress, setNFTMarketAddress] = useState<string | null>(
-    "0xB9354F2eFfbEC1b283e524ABB8eC1404C0e12060"
+    "0xBDD14a569066db595B17f02B895388a7de36d219"
   );
   const [whiteAddress, setWhiteAddress] = useState<string | null>(null);
   const [tokenName, setTokenName] = useState<string | null>("Hoshino");
@@ -218,9 +219,6 @@ export default function NFTMarket() {
     }
     try {
       const nonce = BigInt((await readNFTNonce.refetch()).data ?? 0);
-      const NFTPrice = await readNFTPrice
-        .refetch()
-        .then((data) => BigInt(data.data ?? 0));
       console.log("deadline:", deadline);
       console.log("nonce:", nonce);
       const signature = await signTypedDataAsync({
@@ -230,7 +228,7 @@ export default function NFTMarket() {
         message: {
           buyer: whiteAddress as `0x${string}`,
           tokenId: BigInt(tokenId ?? 0),
-          value: NFTPrice,
+          value: BigInt(amount),
           nonce: nonce,
           deadline: BigInt(deadline),
         },
@@ -280,67 +278,69 @@ export default function NFTMarket() {
 
       // 分割签名
       const { v, r, s } = parseSignature(signature);
-      let v3, r3, s3;
+      let v3: number | undefined,
+        r3: string | undefined,
+        s3: string | undefined;
 
       getSig(tokenId ?? "").then((res) => {
-        const data = (res as { data: { signature: string } }).data;
+        const data = (res as { data: ListSig }).data;
         if (data) {
-          ({
-            v: v3,
-            r: r3,
-            s: s3,
-          } = parseSignature(data.signature as `0x${string}`));
+          const parsedSig = parseSignature(data.signature as `0x${string}`);
+          v3 = parsedSig.v ? Number(parsedSig.v) : undefined;
+          r3 = parsedSig.r;
+          s3 = parsedSig.s;
         }
-      });
-      writeContract({
-        address: NFTMarketAddress as `0x${string}`,
-        abi: NFTMarketABI,
-        functionName: "permitBuyWithOwnerSignature",
-        args: [
-          {
-            listPermitData: {
-              seller: address as `0x${string}`,
-              tokenId: BigInt(tokenId ?? 0),
-              price: BigInt(amount),
-              deadline: BigInt(deadline),
-            },
-            permitData: {
-              buyer: address as `0x${string}`,
-              tokenId: BigInt(tokenId ?? 0),
-              amount: amount ? BigInt(amount) : BigInt(0),
-              nonce: nonce,
-              deadline: BigInt(deadline),
-            },
-            tokenPermitData: {
-              owner: address as `0x${string}`,
-              spender: NFTMarketAddress as `0x${string}`,
-              amount: amount ? BigInt(amount) : BigInt(0),
-              deadline: BigInt(deadline),
-              nonce: tokenNonce,
-            },
-            signature: [
-              {
-                v: v3 ?? 0,
-                r: (r3 ?? "") as `0x${string}`,
-                s: (s3 ?? "") as `0x${string}`,
-              },
-              {
-                v: v1 ?? 0,
-                r: r1 as `0x${string}`,
-                s: s1 as `0x${string}`,
-              },
-              {
-                v: Number(v),
-                r: r,
-                s: s,
-              },
-            ],
-          },
-          isToken,
-        ],
-      });
 
-      console.log("交易已发送！");
+        writeContract({
+          address: NFTMarketAddress as `0x${string}`,
+          abi: NFTMarketABI,
+          functionName: "permitBuyWithOwnerSignature",
+          args: [
+            {
+              listPermitData: {
+                seller: data.seller as `0x${string}`,
+                tokenId: BigInt(data.tokenId),
+                price: BigInt(data.price),
+                deadline: BigInt(data.deadline),
+              },
+              permitData: {
+                buyer: address as `0x${string}`,
+                tokenId: BigInt(tokenId ?? 0),
+                amount: amount ? BigInt(amount) : BigInt(0),
+                nonce: nonce,
+                deadline: BigInt(deadline),
+              },
+              tokenPermitData: {
+                owner: address as `0x${string}`,
+                spender: NFTMarketAddress as `0x${string}`,
+                amount: amount ? BigInt(amount) : BigInt(0),
+                deadline: BigInt(deadline),
+                nonce: tokenNonce,
+              },
+              signature: [
+                {
+                  v: v3 ?? 0,
+                  r: (r3 ?? "") as `0x${string}`,
+                  s: (s3 ?? "") as `0x${string}`,
+                },
+                {
+                  v: v1 ?? 0,
+                  r: r1 as `0x${string}`,
+                  s: s1 as `0x${string}`,
+                },
+                {
+                  v: Number(v),
+                  r: r,
+                  s: s,
+                },
+              ],
+            },
+            isToken,
+          ],
+        });
+
+        console.log("交易已发送！");
+      });
     } catch (error) {
       console.error("发送交易失败:", error);
     }
