@@ -13,7 +13,7 @@ import { useState, useEffect, useCallback } from "react";
 import { NFTABI, NFTMarketABI, ERC20ABI } from "./abi";
 import { parseSignature } from "viem";
 import { AddSigRequest, addSig, getSig } from "@/utils/router";
-import { ListSig } from "./sigList/page"; 
+import { ListSig } from "./sigList/page";
 
 export default function NFTMarket() {
   const { allAccounts, address, isConnected } = useAppKitAccount();

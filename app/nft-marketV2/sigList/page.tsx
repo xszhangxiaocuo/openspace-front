@@ -85,7 +85,10 @@ export default function SigList() {
                 <td className="border border-gray-300 px-4 py-2 text-right">
                   {tx.deadline}
                 </td>
-                <td className="border border-gray-300 px-4 py-2" style={{ wordBreak: "break-all" }}>
+                <td
+                  className="border border-gray-300 px-4 py-2"
+                  style={{ wordBreak: "break-all" }}
+                >
                   {tx.signature}
                 </td>
               </tr>
